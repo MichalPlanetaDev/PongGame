@@ -5,6 +5,8 @@ public class BallController : MonoBehaviour
     public float speed = 7f;
     private Vector2 direction;
 
+    public GameManager gameManager;
+
     void Start()
     {
         ResetBall();
@@ -25,13 +27,11 @@ public class BallController : MonoBehaviour
     {
         if (other.CompareTag("GoalLeft"))
         {
-            Debug.Log("Right player scored!");
-            ResetBall();
+            gameManager.OnGoalScored(true);
         }
         else if (other.CompareTag("GoalRight"))
         {
-            Debug.Log("Left player (bot) scored!");
-            ResetBall();
+            gameManager.OnGoalScored(false);
         }
     }
 

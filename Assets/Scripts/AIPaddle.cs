@@ -16,6 +16,8 @@ public class AIPaddle : MonoBehaviour
         }
     }
 
+    private float clampY = 4.5f;
+
     private void Update()
     {
         if (ball == null || ballController == null)
@@ -26,9 +28,14 @@ public class AIPaddle : MonoBehaviour
         if (ballDir.x < 0f && ball.position.x < -reactionZone)
         {
             float direction = Mathf.Sign(ball.position.y - transform.position.y);
-            transform.Translate(Vector2.up * direction * speed * Time.deltaTime);
+            Vector3 nextPos = transform.position + Vector3.up * direction * speed * Time.deltaTime;
+
+            nextPos.y = Mathf.Clamp(nextPos.y, -clampY, clampY);
+
+            transform.position = nextPos;
         }
     }
+
 
     public void LearnFromHit(float contactY)
     {
