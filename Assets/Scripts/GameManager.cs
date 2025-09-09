@@ -1,10 +1,13 @@
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public BallController ball;
     public AIPaddle ai;
     public PlayerPaddle player;
+
+    public TextMeshProUGUI scoreText;
 
     private int playerScore = 0;
     private int botScore = 0;
@@ -26,5 +29,11 @@ public class GameManager : MonoBehaviour
         }
 
         ball.ResetBall();
+    }
+
+    private void UpdateScoreText()
+    {
+        scoreText.text = playerScore.ToString() + " : " + botScore.ToString();
+        UpdateScoreText();
     }
 }
