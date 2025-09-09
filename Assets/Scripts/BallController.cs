@@ -14,7 +14,7 @@ public class BallController : MonoBehaviour
     {
         transform.Translate(direction * speed * Time.deltaTime);
 
-        // Bounce off top/bottom walls (Y axis)
+        // Bounce off top/bottom
         if (transform.position.y > 4.5f || transform.position.y < -4.5f)
         {
             direction.y = -direction.y;
@@ -40,7 +40,14 @@ public class BallController : MonoBehaviour
         if (collision.gameObject.CompareTag("Paddle"))
         {
             float yOffset = transform.position.y - collision.transform.position.y;
+
             direction = new Vector2(-direction.x, yOffset).normalized;
+
+            var ai = collision.gameObject.GetComponent<AIPaddle>();
+            if (ai != null)
+            {
+                ai.LearnFromHit(transform.position.y);
+            }
         }
     }
 
@@ -52,5 +59,10 @@ public class BallController : MonoBehaviour
         float y = Random.Range(-0.5f, 0.5f);
 
         direction = new Vector2(x, y).normalized;
+    }
+
+    public Vector2 GetDirection()
+    {
+        return direction;
     }
 }

@@ -2,18 +2,36 @@ using UnityEngine;
 
 public class AIPaddle : MonoBehaviour
 {
-    public Transform ball;     // Reference to the ball
-    public float speed = 6f;
+    public Transform ball;
+    public float speed = 5f;
+    public float reactionZone = 3f;
+
+    private BallController ballController;
+
+    private void Start()
+    {
+        if (ball != null)
+        {
+            ballController = ball.GetComponent<BallController>();
+        }
+    }
 
     private void Update()
     {
-        if (ball == null)
+        if (ball == null || ballController == null)
             return;
 
-        // Move up if ball is above, move down if below
-        if (ball.position.y > transform.position.y)
-            transform.Translate(Vector2.up * speed * Time.deltaTime);
-        else if (ball.position.y < transform.position.y)
-            transform.Translate(Vector2.down * speed * Time.deltaTime);
+        Vector2 ballDir = ballController.GetDirection();
+
+        if (ballDir.x < 0f && ball.position.x < -reactionZone)
+        {
+            float direction = Mathf.Sign(ball.position.y - transform.position.y);
+            transform.Translate(Vector2.up * direction * speed * Time.deltaTime);
+        }
+    }
+
+    public void LearnFromHit(float contactY)
+    {
+
     }
 }
