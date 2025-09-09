@@ -3,29 +3,54 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
     public float speed = 7f;
-    private Rigidbody2D rb;
+    private Vector2 direction;
 
-    [System.Obsolete]
-    private void Start()
+    void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        LaunchBall();
+        ResetBall();
     }
 
-    [System.Obsolete]
-    private void LaunchBall()
+    void Update()
     {
-        // Random direction X: -1 or 1
-        float dirX = Random.Range(0, 2) == 0 ? -1f : 1f;
-        float dirY = Random.Range(-0.5f, 0.5f);
+        transform.Translate(direction * speed * Time.deltaTime);
 
-        Vector2 direction = new Vector2(dirX, dirY).normalized;
-        rb.velocity = direction * speed;
+        // Bounce off top/bottom walls (Y axis)
+        if (transform.position.y > 4.5f || transform.position.y < -4.5f)
+        {
+            direction.y = -direction.y;
+        }
     }
 
-    [System.Obsolete]
-    public void StopBall()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        rb.velocity = Vector2.zero;
+        if (other.CompareTag("GoalLeft"))
+        {
+            Debug.Log("Right player scored!");
+            ResetBall();
+        }
+        else if (other.CompareTag("GoalRight"))
+        {
+            Debug.Log("Left player (bot) scored!");
+            ResetBall();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Paddle"))
+        {
+            float yOffset = transform.position.y - collision.transform.position.y;
+            direction = new Vector2(-direction.x, yOffset).normalized;
+        }
+    }
+
+    public void ResetBall()
+    {
+        transform.position = Vector2.zero;
+
+        float x = Random.Range(0, 2) == 0 ? -1 : 1;
+        float y = Random.Range(-0.5f, 0.5f);
+
+        direction = new Vector2(x, y).normalized;
     }
 }
